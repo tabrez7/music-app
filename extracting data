@@ -1,80 +1,33 @@
-
-# coding: utf-8
-
-# In[2]:
-
 from lxml import html
 import requests
-
-
-# In[3]:
-
+import json
 page = requests.get('http://en.wikipedia.org/wiki/List_of_Carnatic_singers')
 tree = html.fromstring(page.text)
-
-
-# In[4]:
-
 for i in tree:
     titles=tree.xpath('//*[@id="mw-content-text"]/ul[3]/li["i"]/a/text()')
 
 
-# In[5]:
-
 del titles[11]
-
-
-# In[6]:
-
 print titles
-
-
-# In[7]:
-
 for i in tree:
      source=tree.xpath('//*[@id="mw-content-text"]/ul[3]/li["i"]/a/@href')
 
 
-# In[8]:
-
 del source[11]
-
-
-# In[9]:
-
+type=tree.xpath('//*[@id="Senior_vocalists_-_those_born_before_1950"]/text()')
+type
 for i in range(len(source)):
     source[i]="http://en.wikipedia.org"+source[i]
 
 
-# In[10]:
-
 print source
-
-
-# In[11]:
-
-type=tree.xpath('//*[@id="Senior_vocalists_-_those_born_before_1950"]/text()')
-
-
-# In[12]:
-
-type
-
-
-# In[13]:
-
 t=type[0][6:-29]
 t
-
-
-# In[14]:
-
-import json
-
-
-# In[35]:
-
-flinks={}
+outfile = open("singers.json","w")
+flinks=[]
 for i in range(len(titles)):
-    flinks={"name":titles[i],"category":t,"source":source[i]}
-    print(json.dumps(flinks, sort_keys=True,indent=4, separators=(',', ': ')))
+    flinks.append({"name":titles[i],"category":t,"source":source[i]})
+    print(json.dumps(flinks,sort_keys=True,indent=4, separators=(',', ': ')))
+json.dump(flinks,outfile, indent=4)
+outfile.close()
+flinks[0]
